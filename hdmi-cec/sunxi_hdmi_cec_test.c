@@ -10,7 +10,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -18,7 +17,7 @@
 
 extern struct hw_module_t HAL_MODULE_INFO_SYM;
 
-#define ME 8
+#define ME 1
 #define BRD CEC_ADDR_BROADCAST
 
 static int send_cec_message(hdmi_cec_device_t *dev, int initiator, int destination, const unsigned char *data,
@@ -53,6 +52,12 @@ static void send_active_source(hdmi_cec_device_t *dev, int destination)
     dev->get_physical_address(dev, &address);
     unsigned char data[] = {CEC_MESSAGE_ACTIVE_SOURCE, address >> 8, address};
     send_cec_message(dev, ME, destination, data, sizeof(data));
+}
+
+static void send_menu_status(hdmi_cec_device_t *dev, int destination)
+{
+  unsigned char data[] = {CEC_MESSAGE_MENU_STATUS, 0x0};
+  send_cec_message(dev, ME, BRD, data, sizeof(data));
 }
 
 static void send_osd_name(hdmi_cec_device_t *dev, int destination)
@@ -108,6 +113,10 @@ cec_event(hdmi_cec_device_t *dev, int initiator, int destination, const unsigned
     case CEC_MESSAGE_GIVE_PHYSICAL_ADDRESS:
     	send_report_physical_address(dev, initiator);
     	break;
+
+    case CEC_MESSAGE_MENU_REQUEST:
+      send_menu_status(dev, initiator);
+      break;
     }
 }
 
@@ -161,7 +170,7 @@ int main(int argc, char *argv[])
     device->register_event_callback(device, (event_callback_t)callback, device);
 
 	broadcast_me(device);
-    //send_active_source(device, BRD);
+    send_active_source(device, BRD);
     //send_osd_name(device, BRD);
 
     ALOGI("initialised");
