@@ -17,7 +17,7 @@ sdcard_image() {
   get_device_dir
 
   boot0="$(gettop)/device/pine64-common/bootloader/boot0.bin"
-  uboot="$(gettop)/device/pine64-common//bootloader/u-boot-with-dtb.bin"
+  uboot="$(gettop)/device/pine64-common/bootloader/u-boot-with-dtb.bin"
   kernel="$ANDROID_PRODUCT_OUT/kernel"
   ramdisk="$ANDROID_PRODUCT_OUT/ramdisk.img"
   ramdisk_recovery="$ANDROID_PRODUCT_OUT/ramdisk-recovery.img"
@@ -45,7 +45,7 @@ sdcard_image() {
     mcopy -v -m -i "${out}.boot" "$kernel" ::
     mcopy -v -m -i "${out}.boot" "$ramdisk" ::
     mcopy -v -m -i "${out}.boot" "$ramdisk_recovery" ::
-    mcopy -v -s -m -i "${out}.boot" "$DEVICE/bootloader/pine64" ::
+    mcopy -v -s -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/pine64" ::
     cat <<"EOF" > uEnv.txt
 console=ttyS0,115200n8
 selinux=permissive
