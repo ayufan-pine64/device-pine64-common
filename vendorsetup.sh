@@ -53,6 +53,9 @@ optargs=enforcing=0 cma=384M no_console_suspend
 kernel_filename=kernel
 initrd_filename=ramdisk.img
 hardware=sun50iw1p1
+
+# Uncomment to enable LCD screen
+# fdt_filename_prefix=pine64/sun50i-a64-lcd-
 EOF
 
     cat <<"EOF" > boot.script
