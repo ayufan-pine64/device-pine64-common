@@ -42,7 +42,8 @@
 #include <hardware/power.h>
 
 /* cpu spec files defined */
-#define ROOMAGE     "/sys/devices/soc.0/cpu_budget_cool.16/roomage"
+#define ROOMAGE0    "/sys/devices/soc.0/cpu_budget_cool.16/roomage"
+#define ROOMAGE1    "/sys/devices/soc.0/cpu_budget_cool.17/roomage"
 #define CPUHOT      "/sys/kernel/autohotplug/enable"
 #define CPU0GOV     "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 
@@ -129,9 +130,11 @@ static int sysfs_write(int index, const char *path, const char *s)
 
 static void set_state(const char *roomage, const char *cpu, const char *gpu)
 {
-  sysfs_write(0, ROOMAGE, roomage);
-  sysfs_write(1, CPU0GOV, cpu);
-  sysfs_write(2, GPUFREQ, gpu);
+  int index = 0;
+  sysfs_write(index++, ROOMAGE0, roomage);
+  sysfs_write(index++, ROOMAGE1, roomage);
+  sysfs_write(index++, CPU0GOV, cpu);
+  sysfs_write(index++, GPUFREQ, gpu);
 }
 
 static int uevent_event()
