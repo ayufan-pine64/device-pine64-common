@@ -33,6 +33,9 @@ sdcard_image() {
   (
     set -eo pipefail
 
+    echo "Compiling dtbs..."
+    make -C "$(gettop)/device/pine64-common/bootloader"
+
     echo "Create beginning of disk..."
     dd if=/dev/zero bs=1M count=$part_position of="$out" status=none
     dd if="$boot0" conv=notrunc bs=1k seek=$boot0_position of="$out" status=none
