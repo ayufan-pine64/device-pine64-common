@@ -2681,7 +2681,7 @@
             compatible = "allwinner,sun50i-ctp-para";
             status = "okay";
             ctp_used = <0x00000001>;
-            ctp_name = "gt911_DB2";
+            ctp_name = "gt911_DB";
             ctp_twi_id = <0x00000000>;
             ctp_twi_addr = <0x00000040>;
             ctp_screen_max_x = <0x00000400>;
