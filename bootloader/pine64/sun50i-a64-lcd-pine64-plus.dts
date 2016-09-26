@@ -2686,8 +2686,8 @@
             ctp_twi_addr = <0x00000040>;
             ctp_screen_max_x = <0x00000400>;
             ctp_screen_max_y = <0x00000258>;
-            ctp_revert_x_flag = <0x00000000>;
-            ctp_revert_y_flag = <0x00000000>;
+            ctp_revert_x_flag = <0x00000001>;
+            ctp_revert_y_flag = <0x00000001>;
             ctp_exchange_x_y_flag = <0x00000000>;
             ctp_int_port = <0x00000030 0x00000007 0x00000004 0x00000006 0xffffffff 0xffffffff 0xffffffff>;
             ctp_wakeup = <0x00000030 0x00000007 0x0000000b 0x00000001 0xffffffff 0xffffffff 0x00000001>;
