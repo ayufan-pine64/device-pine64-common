@@ -6,8 +6,8 @@ ninja_tulip() {
 }
 
 sdcard_image() {
-	if [[ $# -ne 1 ]]; then
-		echo "Usage: $0 <output-image>"
+	if [[ $# -ne 1 ]] && [[ $# -ne 2 ]]; then
+		echo "Usage: $0 <output-image> [data-size-in-MB]"
 		return 1
 	fi
 
@@ -26,6 +26,8 @@ sdcard_image() {
   uboot_position=19096  # KiB
   part_position=21      # MiB
   boot_size=49          # MiB
+  cache_size=768        # MiB
+  data_size=${2:-1024}  # MiB
   mbs=$((1024*1024/512)) # MiB to sector
 
   (
@@ -76,10 +78,19 @@ EOF
     dd if="${out}.system" conv=notrunc oflag=append bs=1M of="$out" status=none
     system_size=$(stat -c%s "${out}.system")
     rm -f "${out}.system"
+
+    echo "Append cache..."
+    dd if=/dev/zero bs=1M conv=notrunc oflag=append count="$cache_size" of="$out" status=none
+
+    echo "Append data..."
+    dd if=/dev/zero bs=1M conv=notrunc oflag=append count="$data_size" of="$out" status=none
+
     echo "Partition table..."
     cat <<EOF | sfdisk "$out"
 $((part_position*mbs)),$((boot_size*mbs)),6
 $(((part_position+boot_size)*mbs)),$((system_size/512)),L
+$(((part_position+boot_size)*mbs+system_size/512)),$((cache_size*mbs)),L
+$(((part_position+boot_size)*mbs+system_size/512)),$((data_size*mbs)),L
 EOF
 
     # TODO: this is broken, because https://github.com/longsleep/u-boot-pine64
@@ -88,7 +99,9 @@ EOF
     # echo "Updating fastboot table..."
     # sunxi-nand-part -f a64 "$out" $(((part_position-20)*mbs)) \
     #   "boot $((boot_size*mbs)) 32768" \
-    #   "system $((system_size/512)) 32768"
+    #   "system $((system_size/512)) 32768" \
+    #   "cache $((cache_size*mbs)) 32768" \
+    #   "data 0 33024"
 
     size=$(stat -c%s "$out")
 
