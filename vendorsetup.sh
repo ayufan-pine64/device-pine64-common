@@ -80,10 +80,16 @@ EOF
     rm -f "${out}.system"
 
     echo "Append cache..."
-    dd if=/dev/zero bs=1M conv=notrunc oflag=append count="$cache_size" of="$out" status=none
+    dd if="/dev/zero" conv=notrunc bs=1M of="${out}.cache" count="$cache_size" status=none
+    mkfs.ext4 "${out}.cache"
+    dd if="${out}.cache" conv=notrunc oflag=append bs=1M of="$out" status=none
+    rm -f "${out}.cache"
 
     echo "Append data..."
-    dd if=/dev/zero bs=1M conv=notrunc oflag=append count="$data_size" of="$out" status=none
+    dd if="/dev/zero" conv=notrunc bs=1M of="${out}.data" count="$data_size" status=none
+    mkfs.ext4 "${out}.data"
+    dd if="${out}.data" conv=notrunc oflag=append bs=1M of="$out" status=none
+    rm -f "${out}.data"
 
     echo "Partition table..."
     cat <<EOF | sfdisk "$out"
