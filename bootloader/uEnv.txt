@@ -1,0 +1,41 @@
+console=ttyS0,115200n8
+selinux=permissive
+optargs="enforcing=0 cma=384M no_console_suspend"
+kernel_filename=kernel
+initrd_filename=ramdisk.img
+hardware=sun50iw1p1
+
+# To use android recovery, uncomment:
+# initrd_filename=ramdisk-recovery.img
+
+# To enable LCD, uncomment:
+# pine64_lcd=on
+
+# To change HDMI display mode, uncomment:
+# disp_mode=480i
+# disp_mode=576i
+# disp_mode=480p
+# disp_mode=576p
+# disp_mode=720p50
+# disp_mode=720p60
+# disp_mode=1080i50
+# disp_mode=1080i60
+# disp_mode=1080p24
+# disp_mode=1080p50
+# disp_mode=1080p60
+# disp_mode=2160p30
+# disp_mode=2160p25
+# disp_mode=2160p24
+
+# To enable DVI compatibilty, uncomment:
+# disp_dvi_compat=on
+
+# To enable CSI camera, uncomment:
+# camera_type=s5k4ec
+# camera_type=ov5640
+
+# Configure ethernet speed
+eth0_speed=auto
+# eth0_speed=1000
+# eth0_speed=100
+# eth0_speed=10

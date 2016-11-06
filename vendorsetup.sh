@@ -49,26 +49,11 @@ sdcard_image() {
     mcopy -v -m -i "${out}.boot" "$ramdisk" ::
     mcopy -v -m -i "${out}.boot" "$ramdisk_recovery" ::
     mcopy -v -s -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/pine64" ::
-    cat <<"EOF" > uEnv.txt
-console=ttyS0,115200n8
-selinux=permissive
-optargs=enforcing=0 cma=384M no_console_suspend
-kernel_filename=kernel
-initrd_filename=ramdisk.img
-hardware=sun50iw1p1
 
-# Uncomment to enable LCD screen
-# fdt_filename_prefix=pine64/sun50i-a64-lcd-
-EOF
-
-    cat <<"EOF" > boot.script
-setenv set_cmdline set bootargs console=${console} ${optargs} androidboot.serialno=${sunxi_serial} androidboot.hardware=${hardware} androidboot.selinux=${selinux} earlyprintk=sunxi-uart,0x01c28000 loglevel=8 root=${root}
-run mmcboot
-EOF
-    mkimage -C none -A arm -T script -d boot.script boot.scr
+    mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" boot.scr
     mcopy -v -m -i "${out}.boot" "boot.scr" ::
-    mcopy -m -i "${out}.boot" "uEnv.txt" ::
-    rm -f boot.script boot.scr uEnv.txt
+    mcopy -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/uEnv.txt" ::
+    rm -f boot.scr
 
     dd if="${out}.boot" conv=notrunc oflag=append bs=1M of="$out" status=none
     rm -f "${out}.boot"
@@ -132,7 +117,8 @@ tulip_sync() {
     fi
     adb remount
     adb sync system
-    for i in kernel ramdisk.img ramdisk-recovery.img; do
+    mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" $ANDROID_PRODUCT_OUT/boot.scr
+    for i in kernel ramdisk.img ramdisk-recovery.img boot.scr; do
       adb push $ANDROID_PRODUCT_OUT/$i /bootloader/
     done
     for i in pine64/sun50i-a64-pine64-plus.dtb; do
