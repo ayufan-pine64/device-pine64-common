@@ -135,7 +135,7 @@ tulip_sync() {
     for i in kernel ramdisk.img ramdisk-recovery.img; do
       adb push $ANDROID_PRODUCT_OUT/$i /bootloader/
     done
-    for i in pine64/sun50i-a64-pine64-plus.dtb pine64/sun50i-a64-lcd-pine64-plus.dtb; do
+    for i in pine64/sun50i-a64-pine64-plus.dtb; do
       adb push $ANDROID_BUILD_TOP/device/pine64-common/bootloader/$i /bootloader/$i
     done
     adb shell sync
