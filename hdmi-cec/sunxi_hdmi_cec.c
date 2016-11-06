@@ -95,8 +95,10 @@ static void clear_logical_address(const struct hdmi_cec_device *dev) {
 }
 
 static int get_physical_address(const struct hdmi_cec_device *dev, uint16_t *addr) {
-    int ret = ioctl(sunxi_hdmi_cec, HDMICEC_IOC_GETPHYADDRESS, addr);
+    uint32_t addr32 = 0;
+    int ret = ioctl(sunxi_hdmi_cec, HDMICEC_IOC_GETPHYADDRESS, &addr32);
     if (ret == 0) {
+        *addr = addr32;
         ALOGV("get_physical_address: %d", *addr);
         return 0;
     } else {
