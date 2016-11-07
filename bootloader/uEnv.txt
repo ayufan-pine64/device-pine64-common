@@ -1,6 +1,7 @@
 console=ttyS0,115200n8
 selinux=permissive
-optargs="enforcing=0 cma=384M no_console_suspend"
+enforcing=0
+optargs=no_console_suspend
 kernel_filename=kernel
 initrd_filename=ramdisk.img
 hardware=sun50iw1p1
@@ -10,6 +11,10 @@ hardware=sun50iw1p1
 
 # To enable LCD, uncomment:
 # pine64_lcd=on
+
+# Configure contiguous memory allocation
+# This maybe required to be enlarged for 4K displays
+cma=384M
 
 # To change HDMI display mode, uncomment:
 # disp_mode=480i

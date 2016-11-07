@@ -6,7 +6,7 @@
 run load_dtb load_kernel load_initrd
 
 # set_cmdline
-setenv bootargs "console=${console} ${optargs} androidboot.serialno=${sunxi_serial} androidboot.hardware=${hardware} androidboot.selinux=${selinux} earlyprintk=sunxi-uart,0x01c28000 loglevel=8 root=${root} eth0_speed=${eth0_speed}"
+setenv bootargs "console=${console} enforcing=${enforcing} cma=${cma} ${optargs} androidboot.serialno=${sunxi_serial} androidboot.hardware=${hardware} androidboot.selinux=${selinux} earlyprintk=sunxi-uart,0x01c28000 loglevel=8 root=${root} eth0_speed=${eth0_speed}"
 
 # set display resolution from uEnv.txt or other environment file
 # default to 1080p30
