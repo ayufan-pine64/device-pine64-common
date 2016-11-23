@@ -66,6 +66,7 @@ typedef struct hdmi_cec_event {
 static int sunxi_hdmi_cec = -1;
 static int enabled = 0;
 static int powered = 0;
+static int system_control = 0;
 static pthread_t process_thread_handle = -1;
 static event_callback_t callback_func;
 static void *callback_arg;
@@ -140,6 +141,10 @@ static int send_message(const struct hdmi_cec_device *dev, const cec_message_t *
 }
 
 static void hotplug_event(struct hdmi_cec_device *dev, int port_id, int connected) {
+    if (!system_control) {
+      return;
+    }
+
     hdmi_event_t event;
     event.type = HDMI_EVENT_HOT_PLUG;
     event.dev = dev;
@@ -204,6 +209,10 @@ static void
 cec_event(struct hdmi_cec_device *dev, int initiator, int destination, const unsigned char *data, size_t length) {
     if (length <= 0) {
         return;
+    }
+
+    if (!system_control) {
+      return;
     }
 
     hdmi_event_t event;
@@ -407,18 +416,14 @@ static void set_option(struct hdmi_cec_device *dev, int flag, int value) {
 
         case HDMI_OPTION_ENABLE_CEC:
             if (value) {
-                open_hdmi_cec(dev);
-            } else {
-                close_hdmi_cec(dev);
-            }
-            break;
-
-        case HDMI_OPTION_SYSTEM_CEC_CONTROL:
-            if (value) {
                 enable_hdmi_cec(dev);
             } else {
                 disable_hdmi_cec(dev);
             }
+            break;
+
+        case HDMI_OPTION_SYSTEM_CEC_CONTROL:
+            system_control = value;
             break;
 
         default:
