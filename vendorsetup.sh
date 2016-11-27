@@ -111,10 +111,8 @@ tulip_sync() {
     set -xe
     command make -C $ANDROID_BUILD_TOP/device/pine64-common/bootloader
     adb wait-for-device
-    if ! adb shell mountpoint /bootloader || ! adb shell touch /bootloader; then
-      adb shell umount /bootloader || true
-      adb shell mount -t vfat /dev/block/mmcblk0p1 /bootloader
-    fi
+    adb shell umount /bootloader || true
+    adb shell mount -t vfat /dev/block/mmcblk0p1 /bootloader
     adb remount
     adb sync system
     mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" $ANDROID_PRODUCT_OUT/boot.scr
