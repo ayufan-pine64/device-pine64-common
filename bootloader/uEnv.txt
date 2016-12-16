@@ -6,17 +6,21 @@ kernel_filename=kernel
 initrd_filename=ramdisk.img
 hardware=sun50iw1p1
 
-# To use android recovery, uncomment:
+# INFO:
+# To enable one of below options,
+# uncomment them by removing # in front of name
+
+# To use android recovery:
 # initrd_filename=ramdisk-recovery.img
 
-# To enable LCD, uncomment:
+# To enable LCD:
 # pine64_lcd=on
 
 # Configure contiguous memory allocation
 # This maybe required to be enlarged for 4K displays
 cma=384M
 
-# To change HDMI display mode, uncomment:
+# To change HDMI display mode:
 # disp_mode=480i
 # disp_mode=576i
 # disp_mode=480p
@@ -32,10 +36,10 @@ disp_mode=1080p60
 # disp_mode=2160p25
 # disp_mode=2160p24
 
-# To enable DVI compatibilty, uncomment:
+# To enable DVI compatibilty:
 # disp_dvi_compat=on
 
-# To enable CSI camera, uncomment:
+# To enable CSI camera:
 # camera_type=s5k4ec
 # camera_type=ov5640
 
@@ -44,3 +48,9 @@ eth0_speed=auto
 # eth0_speed=1000
 # eth0_speed=100
 # eth0_speed=10
+
+# Disable HDMI CEC
+# hdmi_cec=0
+
+# Enable experimental HDMI CEC driver
+hdmi_cec=2

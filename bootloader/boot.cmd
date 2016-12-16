@@ -46,6 +46,15 @@ else
 	fdt set /soc@01c00000/disp@01000000 screen0_output_mode ${fdt_disp_mode}
 fi
 
+# HDMI CEC
+if test "${hdmi_cec}" = "2"; then
+	echo "Using experimental HDMI CEC driver"
+	fdt set /soc@01c00000/hdmi@01ee0000 hdmi_cec_support "<0x00000002>"
+else
+	echo "HDMI CEC is disabled"
+	fdt set /soc@01c00000/hdmi@01ee0000 hdmi_cec_support "<0x00000000>"
+fi
+
 # DVI compatibility
 if test "${disp_dvi_compat}" = "on"; then
 	fdt set /soc@01c00000/hdmi@01ee0000 hdmi_hdcp_enable "<0x00000000>"
