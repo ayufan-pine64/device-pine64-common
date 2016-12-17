@@ -66,13 +66,13 @@ sdcard_image() {
 
     echo "Append cache..."
     dd if="/dev/zero" conv=notrunc bs=1M of="${out}.cache" count="$cache_size" status=none
-    mkfs.ext4 "${out}.cache"
+    mkfs.f2fs "${out}.cache"
     dd if="${out}.cache" conv=notrunc oflag=append bs=1M of="$out" status=none
     rm -f "${out}.cache"
 
     echo "Append data..."
     dd if="/dev/zero" conv=notrunc bs=1M of="${out}.data" count="$data_size" status=none
-    mkfs.ext4 "${out}.data"
+    mkfs.f2fs "${out}.data"
     dd if="${out}.data" conv=notrunc oflag=append bs=1M of="$out" status=none
     rm -f "${out}.data"
 
