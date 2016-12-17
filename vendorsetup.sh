@@ -7,7 +7,7 @@ ninja_tulip() {
 
 sdcard_image() {
 	if [[ $# -ne 1 ]] && [[ $# -ne 2 ]]; then
-		echo "Usage: $0 <output-image> [data-size-in-MB]"
+		echo "Usage: $0 <output-image> [boot-size-in-MB]"
 		return 1
 	fi
 
@@ -22,12 +22,10 @@ sdcard_image() {
   ramdisk="$ANDROID_PRODUCT_OUT/ramdisk.img"
   ramdisk_recovery="$ANDROID_PRODUCT_OUT/ramdisk-recovery.img"
 
-  boot0_position=8      # KiB
-  uboot_position=19096  # KiB
-  part_position=21      # MiB
-  boot_size=49          # MiB
-  cache_size=768        # MiB
-  data_size=${2:-1024}  # MiB
+  boot0_position=8       # KiB
+  uboot_position=19096   # KiB
+  part_position=21       # MiB
+  boot_size=${2:-2200}   # MiB
   mbs=$((1024*1024/512)) # MiB to sector
 
   (
@@ -55,33 +53,26 @@ sdcard_image() {
     mcopy -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/uEnv.txt" ::
     rm -f boot.scr
 
+    echo "Append system to boot file system..."
+    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/system.img" ::
+
+    echo "Append boot..."
     dd if="${out}.boot" conv=notrunc oflag=append bs=1M of="$out" status=none
     rm -f "${out}.boot"
 
-    echo "Append system..."
-    simg2img "$ANDROID_PRODUCT_OUT/system.img" "${out}.system"
-    dd if="${out}.system" conv=notrunc oflag=append bs=1M of="$out" status=none
-    system_size=$(stat -c%s "${out}.system")
-    rm -f "${out}.system"
-
     echo "Append cache..."
-    dd if="/dev/zero" conv=notrunc bs=1M of="${out}.cache" count="$cache_size" status=none
-    mkfs.ext4 "${out}.cache"
-    dd if="${out}.cache" conv=notrunc oflag=append bs=1M of="$out" status=none
-    rm -f "${out}.cache"
+    cache_size=$(stat -c%s "$ANDROID_PRODUCT_OUT/cache.img")
+    dd if="$ANDROID_PRODUCT_OUT/cache.img" conv=notrunc oflag=append bs=1M of="$out" status=none
 
     echo "Append data..."
-    dd if="/dev/zero" conv=notrunc bs=1M of="${out}.data" count="$data_size" status=none
-    mkfs.ext4 "${out}.data"
-    dd if="${out}.data" conv=notrunc oflag=append bs=1M of="$out" status=none
-    rm -f "${out}.data"
+    data_size=$(stat -c%s "$ANDROID_PRODUCT_OUT/userdata.img")
+    dd if="$ANDROID_PRODUCT_OUT/userdata.img" conv=notrunc oflag=append bs=1M of="$out" status=none
 
     echo "Partition table..."
     cat <<EOF | sfdisk "$out"
 $((part_position*mbs)),$((boot_size*mbs)),6
-$(((part_position+boot_size)*mbs)),$((system_size/512)),L
-$(((part_position+boot_size)*mbs+system_size/512)),$((cache_size*mbs)),L
-$(((part_position+boot_size)*mbs+system_size/512)),$((data_size*mbs)),L
+$(((part_position+boot_size)*mbs)),$((cache_size/512)),L
+$(((part_position+boot_size)*mbs)),$((data_size/512)),L
 EOF
 
     # TODO: this is broken, because https://github.com/longsleep/u-boot-pine64
@@ -90,7 +81,6 @@ EOF
     # echo "Updating fastboot table..."
     # sunxi-nand-part -f a64 "$out" $(((part_position-20)*mbs)) \
     #   "boot $((boot_size*mbs)) 32768" \
-    #   "system $((system_size/512)) 32768" \
     #   "cache $((cache_size*mbs)) 32768" \
     #   "data 0 33024"
 
