@@ -2,9 +2,6 @@
 # https://github.com/igorpecovnik/lib/blob/master/config/bootscripts/boot-pine64-default.cmd
 # https://github.com/longsleep/u-boot-pine64/blob/55c9c8c8ac005b1c00ac948386c60c4a741ebaa9/include/configs/sun50iw1p1.h#L339
 
-# load dtb, kernel and initrd
-run load_dtb load_kernel load_initrd
-
 # set_cmdline
 setenv bootargs "console=${console} enforcing=${enforcing} cma=${cma} ${optargs} androidboot.serialno=${sunxi_serial} androidboot.hardware=${hardware} androidboot.selinux=${selinux} earlyprintk=sunxi-uart,0x01c28000 loglevel=8 root=${root} eth0_speed=${eth0_speed}"
 
@@ -76,5 +73,15 @@ if test "${camera_type}" = "ov5640"; then
 	fdt set /soc@01c00000/vfe@0/dev@0/ status "okay"
 fi
 
-# start system
-run boot_kernel
+# check if recovery.txt is created and load recovery image
+if fatload mmc 0:1 ${initrd_addr} recovery.txt; then
+  echo Loading recovery...
+  fatload mmc 0:1 ${initrd_addr} ${recovery_filename}
+else
+  echo Loading normal boot...
+  fatload mmc 0:1 ${initrd_addr} ${boot_filename}
+fi
+
+# boot android image
+run load_dtb
+boota ${initrd_addr}

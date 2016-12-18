@@ -2,8 +2,8 @@ console=ttyS0,115200n8
 selinux=permissive
 enforcing=0
 optargs=no_console_suspend
-kernel_filename=kernel
-initrd_filename=ramdisk.img
+boot_filename=boot.img
+recovery_filename=boot.img
 hardware=sun50iw1p1
 
 # INFO:
@@ -11,7 +11,7 @@ hardware=sun50iw1p1
 # uncomment them by removing # in front of name
 
 # To use android recovery:
-# initrd_filename=ramdisk-recovery.img
+# Create empty file recovery.txt in root of this partition
 
 # To enable LCD:
 # pine64_lcd=on

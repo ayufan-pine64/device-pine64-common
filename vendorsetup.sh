@@ -18,9 +18,6 @@ sdcard_image() {
 
   boot0="$(gettop)/device/pine64-common/bootloader/boot0.bin"
   uboot="$(gettop)/device/pine64-common/bootloader/u-boot-with-dtb.bin"
-  kernel="$ANDROID_PRODUCT_OUT/kernel"
-  ramdisk="$ANDROID_PRODUCT_OUT/ramdisk.img"
-  ramdisk_recovery="$ANDROID_PRODUCT_OUT/ramdisk-recovery.img"
 
   boot0_position=8       # KiB
   uboot_position=19096   # KiB
@@ -43,9 +40,8 @@ sdcard_image() {
     dd if=/dev/zero bs=1M count=${boot_size} of="${out}.boot" status=none
     mkfs.vfat -n BOOT "${out}.boot"
 
-    mcopy -v -m -i "${out}.boot" "$kernel" ::
-    mcopy -v -m -i "${out}.boot" "$ramdisk" ::
-    mcopy -v -m -i "${out}.boot" "$ramdisk_recovery" ::
+    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/boot.img" ::
+    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/recovery.img" ::
     mcopy -v -s -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/pine64" ::
 
     mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" boot.scr
@@ -109,7 +105,7 @@ tulip_sync() {
     adb remount
     adb sync system
     mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" $ANDROID_PRODUCT_OUT/boot.scr
-    for i in kernel ramdisk.img ramdisk-recovery.img boot.scr; do
+    for i in boot.img recovery.img boot.scr; do
       adb push $ANDROID_PRODUCT_OUT/$i /bootloader/
     done
     for i in pine64/sun50i-a64-pine64-plus.dtb; do
