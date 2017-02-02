@@ -75,18 +75,22 @@ fi
 
 run load_dtb
 
+if test "${boot_part}" = ""; then
+  setenv boot_part "0:1"
+fi
+
 if test "${boot_filename}" = ""; then
 	# boot regular kernel
 	echo "Loading kernel and initrd..."
 	run load_kernel load_initrd boot_kernel
 else
 	# check if recovery.txt is created and load recovery image
-	if fatload mmc 0:1 ${initrd_addr} recovery.txt; then
+	if fatload mmc ${boot_part} ${initrd_addr} recovery.txt; then
 		echo Loading recovery...
-		fatload mmc 0:1 ${initrd_addr} ${recovery_filename}
+		fatload mmc ${boot_part} ${initrd_addr} ${recovery_filename}
 	else
 		echo Loading normal boot...
-		fatload mmc 0:1 ${initrd_addr} ${boot_filename}
+		fatload mmc ${boot_part} ${initrd_addr} ${boot_filename}
 	fi
 
 	# boot android image
