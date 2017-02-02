@@ -24,12 +24,11 @@ elif test "${disp_mode}" = "2160p24"; then setenv fdt_disp_mode "<0x0000001e>"
 else setenv fdt_disp_mode "<0x0000000a>"
 fi
 
-if test "${pine64_lcd}" = "on"; then
+# set display for screen0
+if test "${pine64_screen0}" = "lcd"; then
 	echo "Using LCD for main screen"
 	fdt set /soc@01c00000/disp@01000000 screen0_output_type "<0x00000001>"
 	fdt set /soc@01c00000/disp@01000000 screen0_output_mode "<0x00000004>"
-	fdt set /soc@01c00000/disp@01000000 screen1_output_mode ${fdt_disp_mode}
-
 	fdt set /soc@01c00000/lcd0@01c0c000 lcd_used "<0x00000001>"
 
 	fdt set /soc@01c00000/boot_disp output_type "<0x00000001>"
@@ -38,9 +37,26 @@ if test "${pine64_lcd}" = "on"; then
 	fdt set /soc@01c00000/ctp status "okay"
 	fdt set /soc@01c00000/ctp ctp_used "<0x00000001>"
 	fdt set /soc@01c00000/ctp ctp_name "gt911_DB2"
-else
-	echo "Using HDMI for main screen with Display Mode=${fdt_disp_mode}"
-	fdt set /soc@01c00000/disp@01000000 screen0_output_mode ${fdt_disp_mode}
+elif test "${pine64_screen0}" = "hdmi"; then
+	echo "Using LCD for main screen"
+	fdt set /soc@01c00000/disp@01000000 screen0_output_type "<0x00000003>"
+	fdt set /soc@01c00000/disp@01000000 screen0_output_mode "${fdt_disp_mode}"
+fi
+
+# set display for screen1
+if test "${pine64_screen1}" = "lcd"; then
+	echo "Using LCD for secondary screen"
+	fdt set /soc@01c00000/disp@01000000 screen1_output_type "<0x00000001>"
+	fdt set /soc@01c00000/disp@01000000 screen1_output_mode "<0x00000004>"
+	fdt set /soc@01c00000/lcd0@01c0c000 lcd_used "<0x00000001>"
+
+	fdt set /soc@01c00000/ctp status "okay"
+	fdt set /soc@01c00000/ctp ctp_used "<0x00000001>"
+	fdt set /soc@01c00000/ctp ctp_name "gt911_DB2"
+elif test "${pine64_screen1}" = "hdmi"; then
+	echo "Using HDMI for secondary screen"
+	fdt set /soc@01c00000/disp@01000000 screen1_output_type "<0x00000003>"
+	fdt set /soc@01c00000/disp@01000000 screen1_output_mode "${fdt_disp_mode}"
 fi
 
 # HDMI CEC

@@ -13,8 +13,9 @@ hardware=sun50iw1p1
 # To use android recovery:
 # Create empty file recovery.txt in root of this partition
 
-# To enable LCD, if not enabled it will use default:
-# pine64_lcd=on
+# To enable LCD or HDMI, if change it will use default:
+# pine64_screen0=lcd or hdmi
+# pine64_screen1=lcd or hdmi
 
 # Configure contiguous memory allocation
 # This maybe required to be enlarged for 4K displays
