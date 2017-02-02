@@ -6,18 +6,32 @@ ninja_tulip() {
 }
 
 sdcard_image() {
-	if [[ $# -ne 1 ]]; then
-		echo "Usage: $0 <output-image>"
+	if [[ $# -ne 1 ]] && [[ $# -ne 2 ]]; then
+		echo "Usage: $0 <output-image> [pine64|pinebook]"
 		return 1
 	fi
 
-  out_gz="$1"
+  BOOT_TOOLS="$(gettop)/device/pine64-common/boot-tools"
+
+  if [[ ! -d "$BOOT_TOOLS" ]]; then
+    git clone --depth=1 https://github.com/ayufan-pine64/boot-tools.git "$BOOT_TOOLS"
+  fi
+
+  variant="$2"
+  if [[ -z "$variant" ]]; then
+    variant=pine64
+  elif [[ "$variant" != "pine64" ]] && [[ "$variant" != "pinebook" ]]; then
+    echo "Variant can be pine64 or pinebook."
+    return 1
+  fi
+
+  out_gz="$(readlink -f "$1")"
   out="$(dirname "$out_gz")/$(basename "$out_gz" .gz)"
 
   get_device_dir
 
-  boot0="$(gettop)/device/pine64-common/bootloader/boot0.bin"
-  uboot="$(gettop)/device/pine64-common/bootloader/u-boot-with-dtb.bin"
+  boot0="$BOOT_TOOLS/build/boot0_${variant}.bin"
+  uboot="$BOOT_TOOLS/build/u-boot-sun50iw1p1-secure-with-${variant}-dtb.bin"
 
   boot0_position=8       # KiB
   uboot_position=19096   # KiB
@@ -27,9 +41,6 @@ sdcard_image() {
 
   (
     set -eo pipefail
-
-    echo "Compiling dtbs..."
-    make -C "$(gettop)/device/pine64-common/bootloader"
 
     echo "Create beginning of disk..."
     dd if=/dev/zero bs=1M count=$part_position of="$out" status=none
@@ -42,8 +53,8 @@ sdcard_image() {
 
     mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/boot.img" ::
     mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/recovery.img" ::
-    mcopy -v -s -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/pine64" ::
 
+    ( cd "$BOOT_TOOLS/boot/" && mcopy -n -v -s -m -i "${out}.boot" * :: )
     mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" boot.scr
     mcopy -v -m -i "${out}.boot" "boot.scr" ::
     mcopy -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/uEnv.txt" ::
