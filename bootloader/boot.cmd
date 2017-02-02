@@ -25,7 +25,7 @@ else setenv fdt_disp_mode "<0x0000000a>"
 fi
 
 if test "${pine64_lcd}" = "on"; then
-  echo "Using LCD for main screen"
+	echo "Using LCD for main screen"
 	fdt set /soc@01c00000/disp@01000000 screen0_output_type "<0x00000001>"
 	fdt set /soc@01c00000/disp@01000000 screen0_output_mode "<0x00000004>"
 	fdt set /soc@01c00000/disp@01000000 screen1_output_mode ${fdt_disp_mode}
@@ -39,7 +39,7 @@ if test "${pine64_lcd}" = "on"; then
 	fdt set /soc@01c00000/ctp ctp_used "<0x00000001>"
 	fdt set /soc@01c00000/ctp ctp_name "gt911_DB2"
 else
-  echo "Using HDMI for main screen with Display Mode=${fdt_disp_mode}"
+	echo "Using HDMI for main screen with Display Mode=${fdt_disp_mode}"
 	fdt set /soc@01c00000/disp@01000000 screen0_output_mode ${fdt_disp_mode}
 fi
 
@@ -73,15 +73,22 @@ if test "${camera_type}" = "ov5640"; then
 	fdt set /soc@01c00000/vfe@0/dev@0/ status "okay"
 fi
 
-# check if recovery.txt is created and load recovery image
-if fatload mmc 0:1 ${initrd_addr} recovery.txt; then
-  echo Loading recovery...
-  fatload mmc 0:1 ${initrd_addr} ${recovery_filename}
-else
-  echo Loading normal boot...
-  fatload mmc 0:1 ${initrd_addr} ${boot_filename}
-fi
-
-# boot android image
 run load_dtb
-boota ${initrd_addr}
+
+if test "${boot_filename}" = ""; then
+	# boot regular kernel
+	echo "Loading kernel and initrd..."
+	run load_kernel load_initrd boot_kernel
+else
+	# check if recovery.txt is created and load recovery image
+	if fatload mmc 0:1 ${initrd_addr} recovery.txt; then
+		echo Loading recovery...
+		fatload mmc 0:1 ${initrd_addr} ${recovery_filename}
+	else
+		echo Loading normal boot...
+		fatload mmc 0:1 ${initrd_addr} ${boot_filename}
+	fi
+
+	# boot android image
+	boota ${initrd_addr}
+fi
