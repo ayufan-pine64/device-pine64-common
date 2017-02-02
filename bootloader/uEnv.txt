@@ -2,8 +2,9 @@ console=ttyS0,115200n8
 selinux=permissive
 enforcing=0
 optargs=no_console_suspend
-boot_filename=boot.img
-recovery_filename=recovery.img
+kernel_filename=kernel
+initrd_filename=ramdisk.img
+recovery_initrd_filename=ramdisk-recovery.img
 hardware=sun50iw1p1
 
 # INFO:

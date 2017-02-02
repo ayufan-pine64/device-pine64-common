@@ -97,6 +97,10 @@ fi
 
 if test "${boot_filename}" = ""; then
 	# boot regular kernel
+	if fatload mmc ${boot_part} ${initrd_addr} recovery.txt; then
+		echo Using recovery...
+		setenv initrd_filename "${recovery_initrd_filename}"
+	fi
 	echo "Loading kernel and initrd..."
 	run load_kernel load_initrd boot_kernel
 else

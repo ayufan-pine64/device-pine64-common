@@ -51,8 +51,9 @@ sdcard_image() {
     dd if=/dev/zero bs=1M count=${boot_size} of="${out}.boot" status=none
     mkfs.vfat -n BOOT "${out}.boot"
 
-    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/boot.img" ::
-    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/recovery.img" ::
+    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/kernel" ::
+    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/ramdisk.img" ::
+    mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/ramdisk-recovery.img" ::
 
     ( cd "$BOOT_TOOLS/boot/" && mcopy -n -v -s -m -i "${out}.boot" * :: )
     mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" boot.scr
