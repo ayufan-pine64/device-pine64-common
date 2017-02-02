@@ -56,9 +56,9 @@
 
 /*  value define */
 #define ROOMAGE_PERF       "816000 4 0 0 1152000 4 0 0 0"
-#define ROOMAGE_NORMAL     "0 4 0 0 1152000 4 0 0 0"
-#define ROOMAGE_VIDEO      "0 4 0 0 1152000 4 0 0 0"
-#define ROOMAGE_LOWPOWER   "0 1 0 0 1152000 4 0 0 0"
+#define ROOMAGE_NORMAL     "0 1 0 0 1152000 4 0 0 0"
+#define ROOMAGE_VIDEO      "0 1 0 0 1152000 4 0 0 0"
+#define ROOMAGE_LOWPOWER   "0 0 0 0 1152000 4 0 0 0"
 
 /* dram scene value defined */
 #define DRAM_NORMAL         "0"
