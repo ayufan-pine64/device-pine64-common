@@ -92,7 +92,12 @@ fi
 run load_dtb
 
 if test "${boot_part}" = ""; then
-  setenv boot_part "0:1"
+	setenv boot_part "0:1"
+fi
+
+if test "${boot_part}" = "0:1"; then
+	echo "Booting from SD so disabling eMMC..."
+	fdt set /soc@01c00000/sdmmc@01C11000/ status "disabled"
 fi
 
 if test "${boot_filename}" = ""; then
