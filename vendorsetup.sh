@@ -56,10 +56,6 @@ sdcard_image() {
     mcopy -v -m -i "${out}.boot" "$ANDROID_PRODUCT_OUT/ramdisk-recovery.img" ::
 
     ( cd "$BOOT_TOOLS/boot/" && mcopy -n -v -s -m -i "${out}.boot" * :: )
-    mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" boot.scr
-    mcopy -v -m -i "${out}.boot" "boot.scr" ::
-    mcopy -m -i "${out}.boot" "$(gettop)/device/pine64-common/bootloader/uEnv.txt" ::
-    rm -f boot.scr
 
     echo "Append boot..."
     dd if="${out}.boot" conv=notrunc oflag=append bs=1M of="$out" status=none
