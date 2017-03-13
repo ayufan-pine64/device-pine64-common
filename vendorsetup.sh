@@ -113,7 +113,7 @@ tulip_sync() {
     adb remount
     adb sync system
     mkimage -C none -A arm -T script -d "$(gettop)/device/pine64-common/bootloader/boot.cmd" $ANDROID_PRODUCT_OUT/boot.scr
-    for i in boot.img recovery.img boot.scr; do
+    for i in kernel ramdisk.img ramdisk-recovery.img; do
       adb push $ANDROID_PRODUCT_OUT/$i /bootloader/
     done
     for i in pine64/sun50i-a64-pine64-plus.dtb; do
