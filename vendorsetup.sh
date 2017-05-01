@@ -11,11 +11,7 @@ sdcard_image() {
 		return 1
 	fi
 
-  BOOT_TOOLS="$(gettop)/device/pine64-common/boot-tools"
-
-  if [[ ! -d "$BOOT_TOOLS" ]]; then
-    git clone --depth=1 https://github.com/ayufan-pine64/boot-tools.git "$BOOT_TOOLS"
-  fi
+  BOOT_TOOLS="$(gettop)/vendor/ayufan-pine64/boot-tools"
 
   variant="$2"
   if [[ -z "$variant" ]]; then
