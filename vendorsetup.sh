@@ -17,7 +17,7 @@ sdcard_image() {
   if [[ -z "$variant" ]]; then
     variant=plus
   elif [[ "$variant" != "plus" ]] && [[ "$variant" != "pinebook" ]]; then
-    echo "Variant can be pine64 or plus."
+    echo "Variant can be pinebook or plus."
     return 1
   fi
 
