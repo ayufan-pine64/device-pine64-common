@@ -7,7 +7,7 @@ ninja_tulip() {
 
 sdcard_image() {
 	if [[ $# -ne 1 ]] && [[ $# -ne 2 ]]; then
-		echo "Usage: $0 <output-image> [pine64|pinebook]"
+		echo "Usage: $0 <output-image> [plus|pinebook]"
 		return 1
 	fi
 
@@ -15,9 +15,9 @@ sdcard_image() {
 
   variant="$2"
   if [[ -z "$variant" ]]; then
-    variant=pine64
-  elif [[ "$variant" != "pine64" ]] && [[ "$variant" != "pinebook" ]]; then
-    echo "Variant can be pine64 or pinebook."
+    variant=plus
+  elif [[ "$variant" != "plus" ]] && [[ "$variant" != "pinebook" ]]; then
+    echo "Variant can be pine64 or plus."
     return 1
   fi
 
@@ -26,8 +26,8 @@ sdcard_image() {
 
   get_device_dir
 
-  boot0="$BOOT_TOOLS/build/boot0_${variant}.bin"
-  uboot="$BOOT_TOOLS/build/u-boot-sun50iw1p1-secure-with-${variant}-dtb.bin"
+  boot0="$BOOT_TOOLS/boot/pine64/boot0-pine64-${variant}.bin"
+  uboot="$BOOT_TOOLS/boot/pine64/u-boot-pine64-${variant}.bin"
 
   boot0_position=8       # KiB
   uboot_position=19096   # KiB
