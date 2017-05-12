@@ -212,7 +212,11 @@ static void uevent_init()
 static void power_init(__attribute__((unused)) struct power_module *module)
 {
     ALOGI("%s", __func__);
+#if 0
     uevent_init();
+#endif
+
+    set_state(ROOMAGE_NORMAL, GPU_NORMAL, CPUGOV_INTERACTIVE);
 }
 
 static void process_video_encode_hint(void *metadata)
